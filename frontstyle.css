@@ -1,0 +1,76 @@
+/* ========== Base ========== */
+:root{
+  --bg:#1e1e1e;        /* charcoal */
+  --panel:#262626;     /* dark grey panel */
+  --ink:#ffffff;       /* white text */
+  --muted:#bfbfbf;     /* silver text */
+  --line:#3a3a3a;      /* borders */
+  --accent:#d0d0d0;    /* subtle highlight */
+  --shadow:0 10px 28px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:system-ui,Arial,sans-serif}
+
+/* ========== Top Bar ========== */
+.top-bar{
+  position:sticky;top:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 22px;background:linear-gradient(180deg,#232323,#1b1b1b);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 4px 16px rgba(0,0,0,.35);
+}
+.logo{margin:0;font-size:24px;letter-spacing:.12em}
+.icons .icon{
+  margin-left:16px;font-size:22px;text-decoration:none;color:var(--ink);
+  padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.06);
+  transition:.18s ease-in-out;
+}
+.icons .icon:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+
+/* ========== Slideshow ========== */
+.slideshow{position:relative;height:56vh;min-height:420px;max-height:520px;overflow:hidden;background:#141414;border-bottom:1px solid var(--line)}
+.slides{position:relative;width:100%;height:100%}
+.slide{
+  position:absolute;inset:0;
+  transform:translateX(100%);
+  opacity:0;
+  transition:transform 800ms ease, opacity 800ms ease;
+}
+.slide img{width:100%;height:100%;object-fit:cover;display:block}
+.slide.active{transform:translateX(0);opacity:1;z-index:2}
+.slide.exit-left{transform:translateX(-100%);opacity:0;z-index:1}
+
+/* ========== Sections ========== */
+.movie-section{padding:26px 16px;max-width:1400px;margin:0 auto}
+.movie-section h2{
+  margin:0 0 12px;border-left:4px solid var(--line);padding-left:10px;font-size:20px;color:var(--ink)
+}
+
+.movie-row{position:relative;display:flex;align-items:center;overflow:hidden;}
+.movie-cards{
+  display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;padding:6px 2px 10px 2px
+}
+.movie-cards::-webkit-scrollbar{height:8px}
+.movie-cards::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:10px}
+
+/* Poster cards (clean) */
+.card{
+  flex:0 0 auto;width:180px;height:270px;border-radius:14px;overflow:hidden;
+  border:2px solid var(--line);background:#111;box-shadow:var(--shadow);
+  transition:transform .22s ease, border-color .22s ease
+}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card:hover{transform:translateY(-4px);border-color:var(--accent)}
+
+/* Scroll buttons */
+.scroll-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;border:none;border-radius:50%;
+  background:rgba(255,255,255,.08);color:var(--ink);font-size:22px;cursor:pointer;
+  display:none;box-shadow:var(--shadow)
+}
+.movie-row:hover .scroll-btn{display:block}
+.scroll-btn.left{left:-6px}
+.scroll-btn.right{right:-6px}
+.scroll-btn:hover{background:rgba(255,255,255,.18)}

@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Movie Page — RECOMMENDO</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root{
+    --bg1:#0f1724; --bg2:#1f2937; --accent:#ffd36b; --muted:#9aa4b2;
+    --card-bg: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.02);
+    --ink: #fff; --line: #333;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff}
+  /* Top Bar */
+  .top-bar{
+    position:sticky;top:0;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 22px;background:linear-gradient(180deg,#232323,#1b1b1b);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 4px 16px rgba(0,0,0,.35);
+  }
+  .logo{margin:0;font-size:20px;letter-spacing:.12em;color:var(--ink)}
+  .icons .icon{
+    margin-left:12px;font-size:20px;text-decoration:none;color:var(--ink);
+    padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.04);
+    transition:.18s ease-in-out;
+  }
+  .icons .icon:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+  /* page wrap */
+  .wrap{max-width:1100px;margin:18px auto;padding:18px}
+  .card{display:flex;gap:28px;background:var(--card-bg);border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(2,6,23,0.6);align-items:flex-start;backdrop-filter: blur(4px); animation:cardIn .6s cubic-bezier(.2,.9,.3,1)}
+  @keyframes cardIn{from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none}}
+  /* Poster */
+  .poster{flex:0 0 320px}
+  .poster img{width:100%;height:auto;border-radius:12px;object-fit:cover;box-shadow:0 18px 40px rgba(0,0,0,0.6);transition:transform .35s ease,filter .35s ease}
+  .poster img:hover{transform:scale(1.03);filter:brightness(1.03)}
+  /* Details */
+  .details{flex:1;min-width:0}
+  .title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .title{font-size:28px;font-weight:700;color:var(--accent);margin:0 0 8px 0;line-height:1.05}
+  .share-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:999px;color:#fff;cursor:pointer;font-size:16px}
+  .meta-line{color:var(--muted);font-size:14px;margin-bottom:10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .meta-line span{white-space:nowrap}
+  .age{display:block;color:#9ef3c7;font-weight:600;margin-bottom:12px}
+  .desc{color:#dbe6f0cc;line-height:1.6;margin-bottom:14px}
+  .director{color:var(--muted);font-style:italic;margin-bottom:16px}
+  /* Buttons */
+  .actions{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:10px 18px;border-radius:999px;color:#fff;font-weight:700;cursor:pointer;backdrop-filter: blur(4px);transition:all .22s ease}
+  .btn:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.5);border-color:rgba(255,211,107,0.9);color:#0b1220;background:var(--accent)}
+  .btn.active{background: rgba(255,211,107,0.12); border-color: rgba(255,211,107,0.6)}
+  /* distinct colors for counts */
+  #watchCount{color:#4da6ff;font-weight:900}   /* Blue for Watchlist */
+  #favCount{color:#ff6b6b;font-weight:900}     /* Red for Favourite */
+  #watchedCount{color:#7CFC00;font-weight:900} /* Green for Watched */
+
+  /* Reviews */
+  .reviews{margin-top:18px;background:var(--glass);padding:18px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.45)}
+  .reviews h2{margin:0 0 12px 0;color:var(--accent)}
+  .review-item{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));margin-bottom:12px;border:1px solid rgba(255,255,255,0.02)}
+  .review-meta{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .review-author{font-weight:700;color:#cfead3}
+  .stars{color:#ffd36b;font-weight:700}
+  .review-body{color:#d6e2ea;white-space:pre-wrap}
+  .review-form{margin-bottom:14px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:10px}
+  .review-form select,.review-form textarea{border-radius:8px;padding:10px;border:none;background:rgba(0,0,0,0.35);color:#fff;outline:none}
+  .review-form button{align-self:flex-start;padding:10px 16px;border-radius:8px;border:none;background:var(--accent);color:#08111a;font-weight:800;cursor:pointer}
+  .note{color:var(--muted);margin-top:8px}
+  @media (max-width:900px){.card{flex-direction:column;align-items:center}.poster{width:60%;flex-basis:auto}}
+</style>
+</head>
+<body>
+  <!-- Top bar -->
+  <header class="top-bar">
+    <h1 class="logo">RECOMMENDO</h1>
+    <nav class="icons">
+      <a href="searchpage.html" class="icon" title="Search">🔍</a>
+      <a href="profilepage.php" class="icon" title="Profile">👤</a>
+      <a href="chatpage.html" class="icon" title="Chat with AI">💬</a>
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <div id="movie-card" class="card" aria-live="polite">
+      <div class="poster"><img id="posterImg" src="" alt="Poster"></div>
+
+      <div class="details">
+        <div class="title-row">
+          <h1 class="title" id="movieTitle">Loading…</h1>
+          <button id="shareBtn" class="share-btn" title="Share this movie">🔗</button>
+        </div>
+
+        <div class="meta-line">
+          <span id="genreText">Genre</span>
+          <span id="durationText">Duration</span>
+          <span id="yearText">Year</span>
+        </div>
+
+        <div class="age" id="ageText">Age Rating</div>
+
+        <div class="desc" id="descText">Description...</div>
+
+        <div class="director" id="directorText">Directed by ...</div>
+
+        <div class="actions" id="actionButtons">
+          <button id="watchlistBtn" class="btn">📌 Watchlist <span class="count" id="watchCount">0</span></button>
+          <button id="favBtn" class="btn">❤️ Favourite <span class="count" id="favCount">0</span></button>
+          <button id="watchedBtn" class="btn">👁 Watched <span class="count" id="watchedCount">0</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reviews" id="reviewsPanel">
+      <h2>Reviews</h2>
+
+      <!-- REVIEW FORM: now ABOVE the reviews list (shows if user flagged watched) -->
+      <div id="reviewFormWrap" style="display:none">
+        <div class="review-form">
+          <label for="ratingSelect" style="font-weight:700">Your rating</label>
+          <select id="ratingSelect"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select>
+          <label for="reviewText" style="font-weight:700">Your review</label>
+          <textarea id="reviewText" rows="4" placeholder="Write what you thought..."></textarea>
+          <button id="submitReviewBtn">Submit review</button>
+        </div>
+      </div>
+
+      <div id="reviewsList">Loading reviews…</div>
+      <div id="actionNote" class="note"></div>
+    </div>
+  </div>
+
+<script>
+(async function(){
+  const movieId = new URLSearchParams(window.location.search).get('id');
+  if (!movieId) { document.getElementById('movieTitle').innerText = 'Missing ?id=...'; return; }
+
+  // wrappers
+  async function getState(){
+    const res = await fetch(`moviepage.php?id=${movieId}`, { credentials: 'same-origin' });
+    return await res.json();
+  }
+  async function postAction(payload){
+    const form = new URLSearchParams();
+    for (const k in payload) form.append(k, payload[k]);
+    const res = await fetch('moviepage.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: form.toString()
+    });
+    return await res.json();
+  }
+
+  function escapeHtml(s){ if (!s) return ''; return s.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[ch])); }
+
+  async function render(){
+    const state = await getState();
+    if (!state || state.error) {
+      document.getElementById('movieTitle').innerText = state && state.error ? state.error : 'Error loading';
+      return;
+    }
+    const m = state.movie || {};
+
+    // redirect if upcoming
+    if (m.release_status === 'upcoming' || (m.release_date && new Date(m.release_date) > new Date())) {
+      window.location.href = 'upcomingmovie.html?id=' + movieId;
+      return;
+    }
+
+    // populate fields
+    document.getElementById('posterImg').src = m.poster_url || '';
+    document.getElementById('movieTitle').textContent = m.title || '';
+    document.getElementById('genreText').textContent = m.genre || '';
+    document.getElementById('durationText').textContent = m.duration || '';
+    document.getElementById('yearText').textContent = m.release_year || '';
+    document.getElementById('ageText').textContent = m.age_rating ? `Age Rating: ${m.age_rating}` : '';
+    document.getElementById('descText').textContent = m.description || '';
+    document.getElementById('directorText').textContent = m.director ? `Directed by ${m.director}` : '';
+
+    // counts
+    document.getElementById('watchCount').textContent = state.counts?.watchlist ?? 0;
+    document.getElementById('favCount').textContent = state.counts?.favourite ?? 0;
+    document.getElementById('watchedCount').textContent = state.counts?.watched ?? 0;
+
+    // button active states
+    const flags = state.user_flags || {};
+    document.getElementById('watchlistBtn').classList.toggle('active', !!flags.watchlist);
+    document.getElementById('favBtn').classList.toggle('active', !!flags.favourite);
+    document.getElementById('watchedBtn').classList.toggle('active', !!flags.watched);
+
+    // Reviews: render list below the form
+    const reviews = state.reviews || [];
+    const rwrap = document.getElementById('reviewsList');
+    if (!reviews.length) rwrap.innerHTML = '<div class="note">No reviews yet</div>';
+    else rwrap.innerHTML = reviews.map(r => {
+      const stars = '★'.repeat((r.rating||0)) + '☆'.repeat(5 - (r.rating||0));
+      return `<div class="review-item"><div class="review-meta"><div class="review-author">${escapeHtml(r.user_name||'User')}</div><div class="stars">${stars}</div></div><div class="review-body">${escapeHtml(r.review||'')}</div><small class="note">${escapeHtml(r.created_at||'')}</small></div>`;
+    }).join('');
+
+    // show review form only if user flagged watched
+    document.getElementById('reviewFormWrap').style.display = flags.watched ? 'block' : 'none';
+    document.getElementById('actionNote').textContent = flags.watched ? '' : 'Mark as Watched to write a review.';
+  }
+
+  // share button
+  document.getElementById('shareBtn').addEventListener('click', async () => {
+    const url = window.location.href;
+    const title = document.getElementById('movieTitle').textContent || 'Movie';
+    if (navigator.share) {
+      try { await navigator.share({ title, url }); } catch(e) { /* user cancelled */ }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard');
+      } catch (e) {
+        prompt('Copy this link', url);
+      }
+    }
+  });
+
+  // wire UI toggles
+  document.getElementById('watchlistBtn').addEventListener('click', async () => {
+    const res = await postAction({ action: 'toggle', status: 'watchlist', movie_id: movieId });
+    if (res?.error) { alert(res.error); return; }
+    await render();
+    pulse('watchCount');
+  });
+  document.getElementById('favBtn').addEventListener('click', async () => {
+    const res = await postAction({ action: 'toggle', status: 'favourite', movie_id: movieId });
+    if (res?.error) { alert(res.error); return; }
+    await render();
+    pulse('favCount');
+  });
+  document.getElementById('watchedBtn').addEventListener('click', async () => {
+    const res = await postAction({ action: 'toggle', status: 'watched', movie_id: movieId });
+    if (res?.error) { alert(res.error); return; }
+    await render();
+    pulse('watchedCount');
+  });
+
+  // submit review (form is placed above review list)
+  document.getElementById('submitReviewBtn').addEventListener('click', async () => {
+    const rating = document.getElementById('ratingSelect').value;
+    const review = document.getElementById('reviewText').value.trim();
+    if (!rating || !review) { alert('Please select rating and write review'); return; }
+    const res = await postAction({ action: 'review', movie_id: movieId, rating: rating, review: review });
+    if (res?.error) { alert(res.error); return; }
+    document.getElementById('reviewText').value = '';
+    await render();
+    document.getElementById('reviewsPanel').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  function pulse(id){
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.animate([{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}], {duration:420, easing:'ease-out'});
+  }
+
+  // initial render
+  await render();
+
+})();
+</script>
+</body>
+</html>

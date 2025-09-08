@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RECOMMENDO</title>
+  <link rel="stylesheet" href="frontstyle.css" />
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <h1 class="logo">RECOMMENDO</h1>
+    <nav class="icons">
+      <a href="searchpage.html" class="icon" title="Search">🔍</a>
+      <a href="profilepage.php" class="icon" title="Profile">👤</a>
+      <a href="chatpage.html" class="icon" title="Chat with AI">💬</a>
+    </nav>
+  </header>
+
+  <!-- Big Poster Slideshow -->
+  <section class="slideshow">
+    <div class="slides">
+      <figure class="slide" data-link="https://www.screengeek.net/2025/08/19/spider-man-brand-new-day-villain-set-photo/">
+        <img src="http://192.168.29.79:5500/113.jpg" alt="Poster 1" />
+      </figure>
+      <figure class="slide" data-link="https://share.google/DhML9Zr2jDQxKjzKy">
+        <img src="http://192.168.29.79:5500/111.jpg" alt="Poster 2" />
+      </figure>
+      <figure class="slide" data-link="https://www.cinemaexpress.com/english/news/2025/Aug/08/henry-cavills-highlander-finds-its-villain-in-dave-bautista">
+        <img src="http://192.168.29.79:5500/112.jpg" alt="Poster 3" />
+      </figure>
+      <figure class="slide" data-link="https://variety.com/2025/film/news/the-batman-2-filming-spring-2026-1236481330/">
+        <img src="http://192.168.29.79:5500/114.jpg" alt="Poster 4" />
+      </figure>
+      <figure class="slide" data-link="https://www.hindustantimes.com/htcity/cinema/80-years-after-hiroshima-avatars-james-cameron-announces-his-most-powerful-film-since-titanic-everything-to-know-101754475533597.html">
+        <img src="http://192.168.29.79:5500/115.jpg" alt="Poster 5" />
+      </figure>
+    </div>
+  </section>
+
+  <!-- Movie Sections -->
+  <main>
+    <section class="movie-section">
+      <h2>RECOMMENDO BEST</h2>
+      <div class="movie-row" data-type="best">
+        <button class="scroll-btn left">⟨</button>
+        <div class="movie-cards">
+          <!-- cards injected here by JS -->
+        </div>
+        <button class="scroll-btn right">⟩</button>
+      </div>
+    </section>
+
+    <section class="movie-section">
+      <h2>Romcom</h2>
+      <div class="movie-row" data-type="romcom">
+        <button class="scroll-btn left">⟨</button>
+        <div class="movie-cards">
+          <!-- cards injected here by JS -->
+        </div>
+        <button class="scroll-btn right">⟩</button>
+      </div>
+    </section>
+
+    <section class="movie-section">
+      <h2>Sci-Fi</h2>
+      <div class="movie-row" data-type="scifi">
+        <button class="scroll-btn left">⟨</button>
+        <div class="movie-cards">
+          <!-- cards injected here by JS -->
+        </div>
+        <button class="scroll-btn right">⟩</button>
+      </div>
+    </section>
+
+    <section class="movie-section">
+      <h2>Mystery/Thriller</h2>
+      <div class="movie-row" data-type="mystery">
+        <button class="scroll-btn left">⟨</button>
+        <div class="movie-cards">
+          <!-- cards injected here by JS -->
+        </div>
+        <button class="scroll-btn right">⟩</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Script: keeps your slideshow and scrolling exactly as before,
+       and adds a fetch to firstpage.php to populate the card lists. -->
+  <script>
+  /* ====== Slideshow: slide in from right, pause 2s, slide out left, loop ====== */
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const STAY_MS = 2000;   // stay centered time
+  const TRANS_MS = 800;   // transition duration
+
+  let idx = 0;
+
+  // Initialize first slide
+  function initSlides() {
+    slides.forEach(s => s.classList.remove('active','exit-left'));
+    if (slides.length) slides[0].classList.add('active');
+  }
+  initSlides();
+
+  // One step of the carousel
+  function stepSlide() {
+    if (!slides.length) return;
+
+    const prev = slides[idx];
+    const nextIndex = (idx + 1) % slides.length;
+    const next = slides[nextIndex];
+
+    // animate current out to left
+    prev.classList.remove('active');
+    prev.classList.add('exit-left');
+
+    // bring next from right to center
+    next.classList.remove('exit-left');
+    next.classList.add('active');
+
+    // after transition, reset prev back to right for future cycles
+    setTimeout(() => {
+      prev.classList.remove('exit-left');
+    }, TRANS_MS + 20);
+
+    idx = nextIndex;
+  }
+
+  // Run the loop: each tick triggers a transition (TRANS_MS) then the new slide rests (STAY_MS)
+  setInterval(stepSlide, STAY_MS + TRANS_MS);
+
+  // Make slideshow figures clickable (use data-link)
+  slides.forEach(slide => {
+    const link = slide.getAttribute('data-link');
+    if (link) {
+      slide.style.cursor = 'pointer';
+      slide.addEventListener('click', () => {
+        window.open(link, '_blank'); // keep your original behavior (new tab)
+      });
+    }
+  });
+
+  /* ====== Horizontal scrollers for rows ====== */
+  document.querySelectorAll('.movie-row').forEach(row => {
+    const container = row.querySelector('.movie-cards');
+    const leftBtn = row.querySelector('.scroll-btn.left');
+    const rightBtn = row.querySelector('.scroll-btn.right');
+
+    rightBtn.addEventListener('click', () => {
+      container.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+    leftBtn.addEventListener('click', () => {
+      container.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+  });
+
+  /* ====== Populate movie rows by calling firstpage.php ====== */
+  async function loadHomeMovies() {
+    try {
+      const res = await fetch('firstpage.php', { cache: 'no-store' });
+      if (!res.ok) {
+        console.error('firstpage.php error', res.status);
+        return;
+      }
+      const data = await res.json();
+
+      const mapping = {
+        'best': data.best || [],
+        'romcom': data.romcom || [],
+        'scifi': data.scifi || [],
+        'mystery': data.mystery || []
+      };
+
+      document.querySelectorAll('.movie-row').forEach(row => {
+        const type = row.dataset.type;
+        const container = row.querySelector('.movie-cards');
+        container.innerHTML = ''; // clear placeholders
+
+        const list = mapping[type] || [];
+        list.forEach(m => {
+          const a = document.createElement('a');
+          a.className = 'card';
+          a.setAttribute('data-movie-id', m.movie_id);
+          a.href = `moviepage.html?id=${encodeURIComponent(m.movie_id)}`;
+
+          const img = document.createElement('img');
+          img.src = m.template_poster_url || m.poster_url || 'posters/default.jpg';
+          img.alt = m.title || 'Movie';
+          a.appendChild(img);
+
+          // preserve exact look: original cards only had image anchors
+          container.appendChild(a);
+        });
+      });
+
+    } catch (err) {
+      console.error('Failed to load home movies:', err);
+    }
+  }
+
+  // load movies on startup
+  loadHomeMovies();
+  </script>
+</body>
+</html>

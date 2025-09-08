@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Movies</title>
+<style>
+  body {margin:0;font-family:Arial, sans-serif;background:#0f1724;color:#fff;}
+  .container {max-width:1100px;margin:0 auto;padding:0 16px;}
+  .header {position:sticky; top:0; background:#0f1724; z-index:999; padding:10px 0;}
+  .search-bar input {width:100%;padding:10px;border-radius:6px;border:none;font-size:16px;}
+  .tabs {display:flex;gap:12px;margin:12px 0;cursor:pointer;overflow-x:auto;}
+  .tab {padding:6px 14px;border-radius:6px;background:rgba(255,255,255,0.05);white-space:nowrap;flex-shrink:0;}
+  .tab.active {background:var(--accent,#ffd36b);color:#0b1220;}
+  .movies-list {display:flex;flex-direction:column;gap:20px;margin-top:16px;}
+  .movie-card {display:flex;background:rgba(255,255,255,0.03);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s;}
+  .movie-card:hover {transform:scale(1.03);}
+  .movie-card img {width:200px;height:300px;object-fit:cover; border-right: 2px solid rgba(255,255,255,0.1);}
+  .movie-info {padding:16px;flex:1;}
+  .movie-title {font-size:20px;font-weight:700;margin:0;color:#ffd36b;}
+  .movie-year {font-size:14px;color:#9aa4b2;margin:6px 0;}
+  .movie-desc {font-size:15px;color:#dbe6f0cc;}
+  .tabs::-webkit-scrollbar {height:6px;}
+  .tabs::-webkit-scrollbar-thumb {background:rgba(255,255,255,0.2);border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search movies...">
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-section="trending">Trending</div>
+      <div class="tab" data-section="newly_arrived">Newly Arrived</div>
+      <div class="tab" data-section="upcoming">Upcoming Movies</div>
+      <div class="tab" data-section="for_you">For You</div>
+    </div>
+  </div>
+
+  <div class="movies-list" id="moviesList"></div>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+const moviesList = document.getElementById('moviesList');
+let currentSection = 'trending';
+
+async function fetchMovies(query='') {
+  const res = await fetch('searchpage.php' + (query ? '?query='+encodeURIComponent(query) : ''));
+  return await res.json();
+}
+
+function renderMovies(movies) {
+  if (!movies || !movies.length) {
+    moviesList.innerHTML = '<p>No movies found.</p>';
+    return;
+  }
+  moviesList.innerHTML = movies.map(m => `
+    <div class="movie-card" onclick="location.href='moviepage.html?id=${m.movie_id}'">
+      <img src="${m.template_poster_url}" alt="${m.title}">
+      <div class="movie-info">
+        <h3 class="movie-title">${m.title}</h3>
+        <p class="movie-year">${m.release_year} </p>
+        <p class="movie-desc">${m.description}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadSection(section) {
+  const data = await fetchMovies();
+  let movies = [];
+  if(section === 'trending') movies = data.trending;
+  else if(section === 'newly_arrived') movies = data.newly_arrived;
+  else if(section === 'upcoming') movies = data.upcoming;
+  else if(section === 'for_you') movies = data.for_you;
+  renderMovies(movies);
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentSection = tab.dataset.section;
+    loadSection(currentSection);
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', async (e) => {
+  const query = e.target.value.trim();
+  if(query) {
+    const data = await fetchMovies(query);
+    renderMovies(data.search);
+  } else {
+    loadSection(currentSection);
+  }
+});
+
+loadSection(currentSection);
+</script>
+</body>
+</html>
