@@ -1,4 +1,4 @@
-# Movie-Recommendation-project-with-Integrated_A
+# Movie-Recommendation-project-with-Integrated_AI
 ## Overview
 
 Recommendooo is a web application that recommends movies based on the user’s mood and mental state. Instead of a simple rating system, it uses an AI-powered chatbot to understand how the user feels and suggests movies tailored to that emotional state.
